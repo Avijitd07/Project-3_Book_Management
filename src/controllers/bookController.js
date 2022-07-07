@@ -27,7 +27,7 @@ const createBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid Request Parameter, Please Provide Another Details" });
         }
 
-        const { title, excerpt, category, subcategory, ISBN, userId } = body
+        const { title, excerpt, category, subcategory, ISBN, userId, releasedAt } = body
 
 
         if (!isValid(title)) {
