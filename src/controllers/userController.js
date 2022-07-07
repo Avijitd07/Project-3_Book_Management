@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 let nameRegex = /^[a-zA-Z\s]+$/
 let emailRegex = /^[a-z]{1}[a-z0-9._]{1,100}[@]{1}[a-z]{2,15}[.]{1}[a-z]{2,10}$/
 let validMobile = /^[1-9]\d{9}$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,15}$/;
 const isValidTitle = function(x) {
     return ["Mr", "Mrs", "Miss"].indexOf(x) !== -1;
 };
@@ -43,12 +43,7 @@ const createUser = async function(req, res) {
         if (!validMobile.test(phone)) // --> name should be provided in right format
             return res.status(400).send({ status: false, message: "number should contain numeric only. ⚠️" })
 
-        let checkPhone = await userModel.findOne({ phone }); // --> to check if provided mobile number is already present in the database
-        if (checkPhone) { // --> if that mobile number is already provided in the database
-            return res.status(400).send({ status: false, message: "Phone number is already in use, please enter a new one. ⚠️" });
-        }
-
-
+    
         //--> ! validate email
 
         if (!isValid(email)) // --> name should be provided in the body
@@ -56,10 +51,15 @@ const createUser = async function(req, res) {
         if (!emailRegex.test(email)) // --> name should be provided in right format
             return res.status(400).send({ status: false, message: "mail should be contain correct format only. ⚠️" })
 
-        let checkMail = await userModel.findOne({ email: email }); // --> to check if provided mobile number is already present in the database
 
-        if (checkMail) { // --> if that mobile number is already provided in the database
-            return res.status(400).send({ status: false, message: "Mail id is already in use, please enter a new one. ⚠️" });
+        let getBookDetails = await bookModel.findOne({ $or: [{ email: email },{phone: phone}]})
+
+        if (getBookDetails) {
+            if (getBookDetails.email == email) {
+                return res.status(400).send({ status: false, msg: `${email} email already registered ` })
+            } else {
+                return res.status(400).send({ status: false, msg: `${phone} phone number already registered` })
+            }
         }
 
         //-->validating password
@@ -69,10 +69,10 @@ const createUser = async function(req, res) {
         if (!passwordRegex.test(password)) {
             return res.status(400).send({ status: false, msg: "Your password must contain atleast one number,uppercase,lowercase and special character[ @ $ ! % * ? & ] and length should be min of 6-15 charachaters" })
         }
-        let checkPass = await userModel.findOne({ password }); // --> to check if provided mobile number is already present in the database
-        if (checkPass) { // --> if that mobile number is already provided in the database
-            return res.status(400).send({ status: false, message: "Password is already in use, please enter a new one. ⚠️" });
-        }
+        // let checkPass = await userModel.findOne({ password }); // --> to check if provided mobile number is already present in the database
+        // if (checkPass) { // --> if that mobile number is already provided in the database
+        //     return res.status(400).send({ status: false, message: "Password is already in use, please enter a new one. ⚠️" });
+        // }
 
         //-->address validate
         if (!isValid(address)) return res.status(400).send({ status: false, message: "Please enter user address" })
@@ -98,7 +98,7 @@ const loginUser = async function(req, res) {
         let token = jwt.sign({
                 userId: user._id.toString()
             },
-            "ASDFGH3456OKJNBDCFGHJ", { expiresIn: "60min" }
+            "ASDFGH3456OKJNBDCFGHJ", { expiresIn: "1day" }
 
         );
         res.setHeader("x-api-key", token);
