@@ -133,11 +133,11 @@ const deleteBookById = async function (req, res) {
         
         let deleteDate = moment().format('YYYY-MM-DD h:mm:ss') 
          
-        const searchBook = await bookModel.findOneAndUpdate({ _id: enteredBookId }, { isDeleted: true, deletedAt: deleteDate })
+        const searchBook = await bookModel.findOneAndUpdate({ _id: enteredBookId, isDeleted :false }, { isDeleted: true, deletedAt: deleteDate })
 
         if (!searchBook)    return res.status(404).send({ status: false, message: "Resource not found. BookId doesnot exist" })
 
-        if (searchBook.isDeleted == true)   return res.status(404).send({ status: false, message: "Book already deleted" })
+        // if (searchBook.isDeleted == true)   return res.status(404).send({ status: false, message: "Book already deleted" })
         
         return res.status(200).send({ status: true, msg: "Book successfully deleted" })
     }
