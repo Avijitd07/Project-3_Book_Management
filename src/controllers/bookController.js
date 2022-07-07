@@ -88,9 +88,8 @@ const createBook = async function (req, res) {
                 return res.status(400).send({ status: false, message: `${ISBN} ISBN already registered` })
             }
         }
-
-
-        const validBlogData = { title, excerpt, category, ISBN, userId }
+        
+        const validBlogData = { title, excerpt, category, ISBN, userId, releasedAt }
 
         if (subcategory) {
             if (Array.isArray(subcategory)) {
@@ -98,8 +97,9 @@ const createBook = async function (req, res) {
             }
         }
 
-
         let bookData = await bookModel.create(validBlogData)
+
+        console.log("third")
         return res.status(201).send({ status: true, data: bookData })
 
     } catch (err) {
