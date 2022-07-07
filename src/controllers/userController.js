@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel")
+
 const jwt = require("jsonwebtoken")
     ////////////////////////////////////////////////////////
 let nameRegex = /^[a-zA-Z\s]+$/
@@ -52,13 +53,13 @@ const createUser = async function(req, res) {
             return res.status(400).send({ status: false, message: "mail should be contain correct format only. ⚠️" })
 
 
-        let getBookDetails = await bookModel.findOne({ $or: [{ email: email },{phone: phone}]})
+        let getAuthorDetails = await userModel.findOne({ $or: [{ email: email },{phone: phone}]})
 
-        if (getBookDetails) {
-            if (getBookDetails.email == email) {
-                return res.status(400).send({ status: false, msg: `${email} email already registered ` })
+        if (getAuthorDetails) {
+            if (getAuthorDetails.phone == phone) {
+                return res.status(400).send({ status: false, msg: `${phone} phone already registered ` })
             } else {
-                return res.status(400).send({ status: false, msg: `${phone} phone number already registered` })
+                return res.status(400).send({ status: false, msg: `${email} email number already registered` })
             }
         }
 
