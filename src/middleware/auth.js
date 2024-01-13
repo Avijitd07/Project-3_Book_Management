@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { now } = require("mongoose");
+const { Mongoose } = require("mongoose");
 
 //////////////////////////////////////authentication///////////////////////////////////////
 
